@@ -1,0 +1,1 @@
+const AppSecret = '593f3c8727f598d0050265ac292ba526'
