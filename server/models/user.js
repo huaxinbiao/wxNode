@@ -4,6 +4,13 @@ const https = require('https');
 const querystring = require("querystring");
 
 const user = {
+	async findToken (openid) {
+		let _sql = `
+		    SELECT * from login
+		      where openid="${openid}"
+		      limit 1`
+		return await dbUtils.query(_sql)
+	},
 	wxLogin(code) {
 		return new Promise((resolve, reject) => {
 			//这是需要提交的数据  
@@ -23,12 +30,24 @@ const user = {
 			var req = https.request(options, (res) => {
 				res.setEncoding('utf8')
 				res.on('data', function(chunk) {
-					resolve(chunk)
+					typeof(chunk) === 'string' ? chunk = JSON.parse(chunk) : ''
+					if (chunk.errcode) {
+						reject('获取openid失败')
+					} else {
+						user.findToken('123').then(data => {
+							console.log(data);
+						})
+						resolve(chunk)
+					}
 				});
 			});
 
 			req.on('error', function(err) {
-				reject(err)
+				reject({
+					code: 1,
+					data: '',
+					message: '操作失败'
+				})
 			});
 
 			req.end()

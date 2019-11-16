@@ -26,15 +26,16 @@ module.exports = {
 	async wxLogin(ctx) {
 		let code = ctx.query.code
 		let result = {
-			success: true,
 			code: 200,
 			message: '',
 			data: null,
 		}
-		let wxjson = await userModel.wxLogin(code)
-		result.data = {
-			openid: JSON.parse(wxjson).openid
-		}
+		let wxjson = await userModel.wxLogin(code).catch((err) => {
+       console.log(err)
+			 result.code = 401
+			 result.message = err
+    })
+		result.data = wxjson ? wxjson : '' 
 		ctx.body = result
 	}
 }

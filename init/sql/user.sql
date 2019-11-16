@@ -13,3 +13,11 @@ CREATE TABLE   IF NOT EXISTS  `user` (
   `modified_time` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE   IF NOT EXISTS  `login` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+	`session_key` varchar(255) DEFAULT NULL,
+	`openid` varchar(40) DEFAULT NULL,
+	`token` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
