@@ -1,17 +1,34 @@
 const config = require('./../../config')
 const dbUtils = require('./../utils/db-util')
-const https = require('https');
-const querystring = require("querystring");
+const https = require('https')
+const querystring = require("querystring")
+const crypto = require("crypto")  //加密
 
 const user = {
 	async findToken (openid) {
-		let _sql = `
-		    SELECT * from login
-		      where openid="${openid}"
-		      limit 1`
-		return await dbUtils.query(_sql)
+		return await dbUtils.findDataByOpenId('login', openid)
+	},
+	/*
+	 * 路由token验证
+	 */
+	verifToken(token) {
+		return new Promise((resolve, reject) => {
+			var _sql = 'SELECT * FROM `login` WHERE `token` = "' + token + '"'
+			dbUtils.query(_sql).then(data => {
+		console.log(data)
+				if (Array.isArray(data) && data.length > 0) {
+					resolve(true)
+				}else {
+					resolve(false)
+				}
+			}).catch((err) => {
+				console.log(err)
+				reject(false)
+			})
+		})
 	},
 	wxLogin(code) {
+		// 小程序获取openid
 		return new Promise((resolve, reject) => {
 			//这是需要提交的数据  
 			var data = {
@@ -34,17 +51,38 @@ const user = {
 					if (chunk.errcode) {
 						reject('获取openid失败')
 					} else {
-						user.findToken('123').then(data => {
-							console.log(data);
+						user.findToken(chunk.openid).then(data => {
+							var token = crypto.createHash("sha256").update(chunk.openid + new Date().getTime() + 'node_token').digest('hex');
+							if (Array.isArray(data) && data.length > 0) {
+								dbUtils.updateData('login', {
+									session_key: chunk.session_key,
+									token: token
+								}, data[0].id).then(result => {
+									resolve({
+										openid: chunk.openid,
+										token: token
+									})
+								})
+							}else {
+								dbUtils.insertData('login', {
+									session_key: chunk.session_key,
+									openid: chunk.openid,
+									token: token
+								}).then(result => {
+									resolve({
+										openid: chunk.openid,
+										token: token
+									})
+								})
+							}
 						})
-						resolve(chunk)
 					}
 				});
 			});
 
 			req.on('error', function(err) {
 				reject({
-					code: 1,
+					code: 401,
 					data: '',
 					message: '操作失败'
 				})

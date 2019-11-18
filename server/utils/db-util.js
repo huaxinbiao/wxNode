@@ -10,7 +10,6 @@ const pool = mysql.createPool({
 })
 
 let query = function(sql, values) {
-
 	return new Promise((resolve, reject) => {
 		pool.getConnection(function(err, connection) {
 			if (err) {
@@ -38,6 +37,11 @@ let createTable = function(sql) {
 let findDataById = function(table, id) {
 	let _sql = "SELECT * FROM ?? WHERE id = ? "
 	return query(_sql, [table, id, start, end])
+}
+
+let findDataByOpenId = function(table, openid) {
+	let _sql = "SELECT * FROM ?? WHERE openid = ? "
+	return query(_sql, [table, openid])
 }
 
 
@@ -79,6 +83,7 @@ module.exports = {
 	query,
 	createTable,
 	findDataById,
+	findDataByOpenId,
 	findDataByPage,
 	deleteDataById,
 	insertData,
