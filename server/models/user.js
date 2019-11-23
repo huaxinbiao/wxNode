@@ -3,6 +3,7 @@ const dbUtils = require('./../utils/db-util')
 const https = require('https')
 const querystring = require("querystring")
 const crypto = require("crypto")  //加密
+var WXBizDataCrypt = require('./../utils/WXBizDataCrypt')
 
 const user = {
 	async findToken (openid) {
@@ -15,9 +16,8 @@ const user = {
 		return new Promise((resolve, reject) => {
 			var _sql = 'SELECT * FROM `login` WHERE `token` = "' + token + '"'
 			dbUtils.query(_sql).then(data => {
-		console.log(data)
 				if (Array.isArray(data) && data.length > 0) {
-					resolve(true)
+					resolve(data)
 				}else {
 					resolve(false)
 				}
@@ -90,6 +90,18 @@ const user = {
 
 			req.end()
 		})
+	},
+	getWxUserInfo(encryptedData, iv, session_key) {
+		var appId = config.AppId
+		var sessionKey = session_key
+		var encryptedData = encryptedData
+		var iv = iv
+		var pc = new WXBizDataCrypt(appId, sessionKey)
+		var data = pc.decryptData(encryptedData , iv)
+		delete data.unionId
+		delete data.watermark
+		delete data.openId
+		return data
 	}
 }
 

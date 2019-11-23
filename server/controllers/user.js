@@ -21,33 +21,20 @@ module.exports = {
 			default:
 				break;
 		}
-		let isToken = await userModel.verifToken(query.token).catch((err) => {
+		let loginInfo = await userModel.verifToken(query.token).catch((err) => {
 		   console.log(err, 'err')
 		})
-		if (isToken) {
-			await next()
+		if (loginInfo) {
+			ctx.loginInfo = loginInfo[0]
+			await next(ctx)
 		}else{
 			ctx.body = {
-				code: 401,
+				code: 705,
 				message: 'token不存在',
 				data: null,
 			}
 			return
 		}
-	},
-	
-	/**
-	 * 获取用户信息
-	 * @param    {obejct} ctx 上下文对象
-	 */
-	loginUserInfo(ctx) {
-		let result = {
-			success: false,
-			message: '',
-			data: null,
-		}
-
-		ctx.body = result
 	},
 	
 	/**
@@ -61,12 +48,27 @@ module.exports = {
 			message: '',
 			data: null,
 		}
-		let wxjson = await userModel.wxLogin(code).catch((err) => {
+		let wxJson = await userModel.wxLogin(code).catch((err) => {
        console.log(err)
 			 result.code = 401
 			 result.message = err
     })
 		result.data = wxjson ? wxjson : '' 
+		ctx.body = result
+	},
+	
+	/**
+	 * 获取用户信息
+	 * @param    {obejct} ctx 上下文对象
+	 */
+	async loginUserInfo(ctx) {
+		let userJson = userModel.getWxUserInfo(ctx.request.body.encryptedData, ctx.request.body.iv, ctx.loginInfo.session_key)
+		console.log('userJson', userJson)
+		let result = {
+			code: 200,
+			message: '',
+			data: userJson,
+		}
 		ctx.body = result
 	}
 }
