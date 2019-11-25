@@ -39,9 +39,9 @@ let findDataById = function(table, id) {
 	return query(_sql, [table, id, start, end])
 }
 
-let findDataByOpenId = function(table, openid) {
-	let _sql = "SELECT * FROM ?? WHERE openid = ? "
-	return query(_sql, [table, openid])
+let findDataByOneId = function(table, name, id) {
+	let _sql = "SELECT * FROM ?? WHERE " + name + " = ? "
+	return query(_sql, [table, id])
 }
 
 
@@ -83,7 +83,7 @@ module.exports = {
 	query,
 	createTable,
 	findDataById,
-	findDataByOpenId,
+	findDataByOneId,
 	findDataByPage,
 	deleteDataById,
 	insertData,

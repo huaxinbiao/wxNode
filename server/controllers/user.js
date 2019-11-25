@@ -1,5 +1,5 @@
 const userModel = require('./../models/user')
-const noToken = ['/api/user/wxlogin']
+const noToken = ['/api/user/wxlogin', '/api/user/loginUserInfo']
 module.exports = {
 	/*
 	 * 验证token
@@ -53,7 +53,7 @@ module.exports = {
 			 result.code = 401
 			 result.message = err
     })
-		result.data = wxjson ? wxjson : '' 
+		result.data = wxJson ? wxJson : '' 
 		ctx.body = result
 	},
 	
@@ -62,13 +62,20 @@ module.exports = {
 	 * @param    {obejct} ctx 上下文对象
 	 */
 	async loginUserInfo(ctx) {
-		let userJson = userModel.getWxUserInfo(ctx.request.body.encryptedData, ctx.request.body.iv, ctx.loginInfo.session_key)
-		console.log('userJson', userJson)
-		let result = {
-			code: 200,
-			message: '',
-			data: userJson,
-		}
-		ctx.body = result
+		await userModel.getWxUserInfo(ctx.request.body.encryptedData, ctx.request.body.iv, ctx.request.body.openid).then((data) => {
+			let result = {
+				code: 200,
+				message: '',
+				data: data,
+			}
+			ctx.body = result
+		}).catch((error) => {
+			let result = {
+				code: 401,
+				message: error.message,
+				data: null
+			}
+			ctx.body = result
+		})
 	}
 }
