@@ -1,4 +1,5 @@
 const userModel = require('./../models/user')
+const Token =  require('./../utils/jwt')
 const noToken = ['/api/user/wxlogin', '/api/user/loginUserInfo']
 module.exports = {
 	/*
@@ -21,17 +22,23 @@ module.exports = {
 			default:
 				break;
 		}
-		let loginInfo = await userModel.verifToken(query.token).catch((err) => {
-		   console.log(err, 'err')
-		})
-		if (loginInfo) {
-			ctx.loginInfo = loginInfo[0]
+		var tokenInfo = Token.decrypt(query.token)
+		if (tokenInfo.token) {
+			ctx.unionid = tokenInfo.data.unionid
 			await next(ctx)
 		}else{
-			ctx.body = {
-				code: 705,
-				message: 'token不存在',
-				data: null,
+			if (tokenInfo.data.name = 'TokenExpiredError') {
+				ctx.body = {
+					code: 705,
+					message: 'token已过期',
+					data: null,
+				}
+			} else {
+				ctx.body = {
+					code: 700,
+					message: 'token不存在',
+					data: null,
+				}
 			}
 			return
 		}
@@ -77,5 +84,19 @@ module.exports = {
 			}
 			ctx.body = result
 		})
+	},
+	
+	/* 
+	 * 用户动态列表
+	 */
+	async dynamicList(ctx) {
+		let result = {
+			code: 200,
+			message: '',
+			data: {
+				unionid: ctx.unionid
+			},
+		}
+		ctx.body = result
 	}
 }

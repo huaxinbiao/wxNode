@@ -8,10 +8,10 @@ const Token = {
 	},
 	decrypt: function(token) {
 		try {
-			let data = jwt.verify(token, key);
+			let data = jwt.verify(token, key)
 			return {
 				token: true,
-				id: data.id
+				data: data
 			};
 		} catch (e) {
 			return {
