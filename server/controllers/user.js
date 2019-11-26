@@ -24,7 +24,8 @@ module.exports = {
 		}
 		var tokenInfo = Token.decrypt(query.token)
 		if (tokenInfo.token) {
-			ctx.unionid = tokenInfo.data.unionid
+			ctx.unionid = tokenInfo.data.unionid,
+			ctx.uuid = tokenInfo.data.uuid
 			await next(ctx)
 		}else{
 			if (tokenInfo.data.name = 'TokenExpiredError') {
@@ -94,7 +95,8 @@ module.exports = {
 			code: 200,
 			message: '',
 			data: {
-				unionid: ctx.unionid
+				unionid: ctx.unionid,
+				uuid: ctx.uuid
 			},
 		}
 		ctx.body = result

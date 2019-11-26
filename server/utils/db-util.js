@@ -57,8 +57,8 @@ let insertData = function(table, values) {
 }
 
 
-let updateData = function(table, values, id) {
-	let _sql = "UPDATE ?? SET ? WHERE id = ?"
+let updateData = function(table, values, name, id) {
+	let _sql = "UPDATE ?? SET ? WHERE " + name + " = ?"
 	return query(_sql, [table, values, id])
 }
 
