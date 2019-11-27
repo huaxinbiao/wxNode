@@ -7,5 +7,6 @@ const routers = router
   .get('/user/wxlogin', userInfoController.wxLogin)
   .post('/user/loginUserInfo', userInfoController.loginUserInfo)
   .get('/dynamic/list', userInfoController.dynamicList)
+  .post('/upload', userInfoController.upload)
 
 module.exports = routers

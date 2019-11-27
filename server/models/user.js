@@ -39,9 +39,10 @@ const user = {
 							if (Array.isArray(data) && data.length > 0) {
 								dbUtils.updateData('login', {
 									session_key: chunk.session_key
-								}, data[0].id).then(result => {
+								}, 'id', data[0].id).then(result => {
 									resolve({
-										openid: chunk.openid
+										openid: chunk.openid,
+										key: chunk.session_key
 									})
 								})
 							}else {
@@ -50,7 +51,8 @@ const user = {
 									openid: chunk.openid
 								}).then(result => {
 									resolve({
-										openid: chunk.openid
+										openid: chunk.openid,
+										key: chunk.session_key
 									})
 								})
 							}
@@ -117,7 +119,6 @@ const user = {
 				wxUser.token = token
 				resolve(wxUser)
 			}).catch((result) => {
-				console.log('error', result)
 				reject(result)
 			})
 		})

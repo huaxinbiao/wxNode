@@ -1,5 +1,6 @@
 const userModel = require('./../models/user')
 const Token =  require('./../utils/jwt')
+const Upload =  require('./../utils/upload')
 const noToken = ['/api/user/wxlogin', '/api/user/loginUserInfo']
 module.exports = {
 	/*
@@ -73,7 +74,7 @@ module.exports = {
 		await userModel.getWxUserInfo(ctx.request.body.encryptedData, ctx.request.body.iv, ctx.request.body.openid).then((data) => {
 			let result = {
 				code: 200,
-				message: '',
+				message: '成功',
 				data: data,
 			}
 			ctx.body = result
@@ -82,6 +83,9 @@ module.exports = {
 				code: 401,
 				message: error.message,
 				data: null
+			}
+			if (error.message == 'Illegal Buffer') {
+				result.code = 705
 			}
 			ctx.body = result
 		})
@@ -97,7 +101,33 @@ module.exports = {
 			data: {
 				unionid: ctx.unionid,
 				uuid: ctx.uuid
-			},
+			}
+		}
+		ctx.body = result
+	},
+	
+	/* 
+	 * 文件上传
+	 */
+	async upload(ctx) {
+		let result = {
+			code: 200,
+			message: '',
+			data: null
+		}
+		const file = ctx.request.files.file; // 获取上传文件
+		if (file.type.indexOf('image') > -1 && ctx.request.body.type == 'image'){
+			// 图片
+			Upload(file, 'images')
+		} else if (file.type.indexOf('video') > -1 && ctx.request.body.type == 'video') {
+			// 视频
+			Upload(file, 'video')
+		} else if (file.type.indexOf('audio') > -1 && ctx.request.body.type == 'audio') {
+			// 音频
+			Upload(file, 'audio')
+		} else {
+			result.code = 401
+			result.message = '不允许上传的文件类型'
 		}
 		ctx.body = result
 	}
