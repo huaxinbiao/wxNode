@@ -118,13 +118,13 @@ module.exports = {
 		const file = ctx.request.files.file; // 获取上传文件
 		if (file.type.indexOf('image') > -1 && ctx.request.body.type == 'image'){
 			// 图片
-			Upload(file, 'images')
+			result.data = await Upload(file, 'images')
 		} else if (file.type.indexOf('video') > -1 && ctx.request.body.type == 'video') {
 			// 视频
-			Upload(file, 'video')
+			result.data = await Upload(file, 'video')
 		} else if (file.type.indexOf('audio') > -1 && ctx.request.body.type == 'audio') {
 			// 音频
-			Upload(file, 'audio')
+			result.data = await Upload(file, 'audio')
 		} else {
 			result.code = 401
 			result.message = '不允许上传的文件类型'
