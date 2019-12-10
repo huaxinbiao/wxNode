@@ -1,6 +1,5 @@
 const userModel = require('./../models/user')
 const Token =  require('./../utils/jwt')
-const Upload =  require('./../utils/upload')
 const noToken = ['/api/user/wxlogin', '/api/user/loginUserInfo']
 module.exports = {
 	/*
