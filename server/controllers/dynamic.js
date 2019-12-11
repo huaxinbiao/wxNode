@@ -39,11 +39,10 @@ module.exports = {
 		}
 		let parameter = ctx.request.body
 		switch (parameter.type){
-			case 'image':
+			case 1:
 				if (parameter.content || (parameter.images && parameter.images.length>0)) {
-					await dynamicModel.setImage(parameter).then((res) => {
+					await dynamicModel.setImage(parameter, ctx.uuid).then((res) => {
 						result.message = res.message
-						result.data = res.data
 					}).catch((error) => {
 						result.code = 401
 						result.message = error

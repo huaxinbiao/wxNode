@@ -7,10 +7,10 @@ const dynamic = {
 	/*
 	 * 验证数据,移动文件
 	 */
-	setImage(parameter) {
+	setImage(parameter, uuid) {
 		return new Promise((resolve, reject) => {
 			let schema = Joi.object().keys({
-				type: Joi.string().required(),
+				type: Joi.number().required(),
 				images: Joi.array().max(9).items(Joi.object().keys({path: Joi.string()})),
 				content: Joi.string().max(1000).allow('')
 			}).or('images', 'content')
@@ -25,9 +25,16 @@ const dynamic = {
 					}
 				}
 				utilsFile.moveFile(images).then((result) => {
+					return dbUtils.insertData('dynamics', {
+						uuid: uuid,
+						type: parameter.type,
+						img_url: images.join(';'),
+						content: parameter.content,
+						create_time: new Date().getTime()
+					})
+				}).then(result => {
 					resolve({
-						message: '成功',
-						data: result
+						message: '成功'
 					})
 				}).catch((error) => {
 					reject(error.message)

@@ -32,7 +32,7 @@ const uploadFile = (file, folder) => {
 			const reader = fs.createReadStream(file.path)
 			let interimPath = filePaths(`../../upload/interim/${folder}`)
 			let fileName = new Date().getTime() + '-' + stringRandom(16, {}) + path.extname(file.name)
-			let filePath = path.join(__dirname, interimPath) + `/${fileName}`
+			let filePath = path.join(__dirname, interimPath, fileName)
 			try{
 				// 创建可写流
 				const upStream = fs.createWriteStream(filePath)
@@ -40,7 +40,7 @@ const uploadFile = (file, folder) => {
 				reader.pipe(upStream)
 				reader.on('end', () => {
 				  resolve({
-						path: interimPath + `/${fileName}`
+						path: filePath.slice(filePath.indexOf("upload")-1)
 					})
 				});
 			}catch(e){
@@ -111,7 +111,7 @@ const moveFile = (interimPath) => {
 const pasteFile = (interimPath, callback, error) => {
 	try{
 		// 创建可读流
-		let interimWholePath = path.join(__dirname, interimPath)
+		let interimWholePath = path.resolve(__dirname, '../../' + interimPath)
 		if (!fs.existsSync(interimWholePath)) {
 			error({
 				message: '文件不存在'
@@ -128,7 +128,7 @@ const pasteFile = (interimPath, callback, error) => {
 		reader.on('end', () => {
 			fs.unlink(interimWholePath, (err) => {
 			  if (err) throw err;
-			  console.log('文件已删除')
+			  // console.log('文件已删除')
 			})
 			callback({
 				path: interimPath.replace(/interim/, 'formal')
