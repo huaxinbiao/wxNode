@@ -66,6 +66,12 @@ const moveFile = (interimPath) => {
 	return new Promise((resolve, reject) => {
 		let images = []
 		let error = []
+		if (interimPath.length === 0) {
+			resolve({
+				images: images,
+				error: error
+			})
+		}
 		try{
 			for (let i = 0; i < interimPath.length; i++) {
 				pasteFile(interimPath[i], (res) => {
