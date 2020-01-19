@@ -15,7 +15,7 @@ let query = function(sql, values) {
 			if (err) {
 				resolve(err)
 			} else {
-				connection.query(sql, values, (err, rows) => {
+				let querys = connection.query(sql, values, (err, rows) => {
 					if (err) {
 						reject(err)
 					} else {
@@ -23,6 +23,7 @@ let query = function(sql, values) {
 					}
 					connection.release()
 				})
+        console.log(querys.sql)
 			}
 		})
 	})
@@ -50,9 +51,9 @@ let findDataByPage = function(table, keys, start, end) {
 	return query(_sql, [keys, table, start, end])
 }
 
-let findDataConditionalByPage = function(table, keys, key, val, start, end) {
-	let _sql = "SELECT ?? FROM ?? WHERE ? LIKE ? LIMIT ? , ?"
-	return query(_sql, [keys, table, key, val, start, end])
+let findDataConditionalByPage = function(table, keys, key, value, start, end) {
+	let _sql = "SELECT ?? FROM ?? WHERE ?? = ? LIMIT ? , ?"
+	return query(_sql, [keys, table, key, value, start, end])
 }
 
 
@@ -79,9 +80,14 @@ let select = function(table, keys) {
 	return query(_sql, [keys, table])
 }
 
-let count = function(table) {
-	let _sql = "SELECT COUNT(*) AS total_count FROM ?? "
-	return query(_sql, [table])
+let count = function(table, key, value) {
+  if (key) {
+    let _sql = "SELECT COUNT(*) AS total_count FROM ?? WHERE ?? = ?"
+    return query(_sql, [table, key, value])
+  } else {
+    let _sql = "SELECT COUNT(*) AS total_count FROM ??"
+    return query(_sql, [table])
+  }
 }
 
 module.exports = {
