@@ -7,6 +7,7 @@ module.exports = {
 	 * @param    {obejct} ctx 上下文对象
 	 */
 	async verifToken(ctx, next) {
+		console.log('token验证')
 		if (noToken.indexOf(ctx.path) > -1) {
 			await next()
 			return

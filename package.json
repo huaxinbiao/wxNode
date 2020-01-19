@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "sql_init": "node ./init/index.js",
-    "init": "nodemon ./server/app.js"
+    "init": "nodemon ./server/app.js",
+    "pa": "node ./server/services/crawl.js"
   },
   "author": "",
   "license": "ISC",
