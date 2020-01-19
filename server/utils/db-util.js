@@ -50,6 +50,11 @@ let findDataByPage = function(table, keys, start, end) {
 	return query(_sql, [keys, table, start, end])
 }
 
+let findDataConditionalByPage = function(table, keys, key, val, start, end) {
+	let _sql = "SELECT ?? FROM ?? WHERE ? LIKE ? LIMIT ? , ?"
+	return query(_sql, [keys, table, key, val, start, end])
+}
+
 
 let insertData = function(table, values) {
 	let _sql = "INSERT INTO ?? SET ?"
@@ -85,6 +90,7 @@ module.exports = {
 	findDataById,
 	findDataByOneId,
 	findDataByPage,
+	findDataConditionalByPage,
 	deleteDataById,
 	insertData,
 	updateData,

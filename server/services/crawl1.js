@@ -161,7 +161,7 @@ var c = new Crawler({
 
 // 将一个URL加入请求队列，并使用默认回调函数
 c.queue({
-	uri: URL + '/dianying/xijupian/',
+	uri: URL + '/dianying/zhubo/',
 	type: 'list'
 });
 

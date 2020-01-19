@@ -4,10 +4,11 @@ const Token =  require('./../utils/jwt')
 module.exports = {
 	async movieList(ctx) {
 		let limit = 12
+		let type = ctx.query.type || ''
 		let page = ctx.query.page || 1
 		let end = page * limit
 		let start = end - limit
-		await movieModel.getList(start, end).then((data) => {
+		await movieModel.getList(start, end, `'${type}'`).then((data) => {
 			let result = {
 				code: 200,
 				message: '成功',

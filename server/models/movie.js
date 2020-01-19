@@ -1,7 +1,7 @@
 const dbUtils = require('./../utils/db-util')
 
 const movie = {
-	getList(start, end) {
+	getList(start, end, type) {
 		return new Promise((resolve, reject) => {
 			dbUtils.count('video').then((result) => {
 				if (start > result[0].total_count) {
@@ -12,13 +12,14 @@ const movie = {
 					return result[0].total_count
 				}
 			}).then((count) => {
-				dbUtils.findDataByPage('video', ['id', 'title', 'image', 'actor', 'video_time'], start, end).then(result => {
-					// console.log(result)
+				dbUtils.findDataConditionalByPage('video', ['id', 'title', 'image', 'actor', 'video_time'], 'video_type', type, start, end).then(result => {
+					console.log(result)
 					resolve({
 						count: count,
 						list: result
 					})
 				}).catch((error) => {
+					console.log(error)
 					reject(error)
 				})
 			}).catch(() => {
